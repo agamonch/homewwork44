@@ -1,12 +1,14 @@
 package kg.unicapp.homework43
 
-
+import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
+
 
 class MainActivity : AppCompatActivity(), MyAdapter.SetClickListener {
 
@@ -15,10 +17,10 @@ class MainActivity : AppCompatActivity(), MyAdapter.SetClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        getLongListOfItems()
+        setupView()
     }
 
-    fun getLongListOfItems() {
+    fun setupView() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         myAdapter = MyAdapter(this)
         recyclerView.adapter = myAdapter
@@ -34,7 +36,20 @@ class MainActivity : AppCompatActivity(), MyAdapter.SetClickListener {
     }
 
     override fun deleteIcon(position: Int) {
-        myAdapter.deleteById(position)
+        var builder = AlertDialog.Builder(this)
+        builder.run {
+            setTitle("Удаление элемента")
+            setMessage("Вы уверены?")
+            setPositiveButton("Да", DialogInterface.OnClickListener { dialog, id ->
+                myAdapter.deleteById(position)
+                dialog.cancel()
+            })
+            builder.setNegativeButton("Нет", DialogInterface.OnClickListener { dialog, id ->
+                dialog.cancel()
+            })
+            var alert: AlertDialog = builder.create()
+            alert.show()
+        }
     }
 }
 
